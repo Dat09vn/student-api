@@ -24,12 +24,13 @@ var (
 
 func getStudents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(students)
+	log.Println("Get all students: ")
 }
 
 func getStudent(w http.ResponseWriter, r *http.Request) {
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
-
+	log.Println("getStudent: ", id)
 	for _, s := range students {
 		if s.ID == id {
 			json.NewEncoder(w).Encode(s)
@@ -42,7 +43,7 @@ func getStudent(w http.ResponseWriter, r *http.Request) {
 func createStudent(w http.ResponseWriter, r *http.Request) {
 	var s Student
 	json.NewDecoder(r.Body).Decode(&s)
-
+	log.Println("createStudent: ")
 	mu.Lock()
 	s.ID = idSeq
 	idSeq++
@@ -57,6 +58,7 @@ func updateStudent(w http.ResponseWriter, r *http.Request) {
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
 
+	log.Println("updateStudent: ", id)
 	var updated Student
 	json.NewDecoder(r.Body).Decode(&updated)
 
@@ -76,7 +78,7 @@ func updateStudent(w http.ResponseWriter, r *http.Request) {
 func deleteStudent(w http.ResponseWriter, r *http.Request) {
 	idStr := mux.Vars(r)["id"]
 	id, _ := strconv.Atoi(idStr)
-
+	log.Println("deleteStudent: ", id)
 	mu.Lock()
 	defer mu.Unlock()
 	for i, s := range students {
@@ -101,4 +103,3 @@ func main() {
 	log.Println("Server is running on port", port)
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }
-
